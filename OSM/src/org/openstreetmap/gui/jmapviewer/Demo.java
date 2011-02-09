@@ -104,11 +104,6 @@ public class Demo extends JFrame {
 
         //
         /**
-         * maxmirkia
-         */
-        map.addMapMarker(new MapMarkerDot(Color.BLUE, 49.814284999, 8.642065999));
-        map.setDisplayPositionByLatLon(49.814284999, 8.642065999, 15);
-        /**
          * Fredrik Gustafsson
          */
         JButton current = new JButton("Show current location");
@@ -121,17 +116,15 @@ public class Demo extends JFrame {
                 counter++;
                 try {
                     Thread.sleep(5000);
-                    map.addMapMarker(new MapMarkerDot(main.getLatitude(), main.getLongitude()));
-                    System.out.println("!!!!!!!" + main.getLatitude());
-                    System.out.println("!!!!!" + main.getLongitude());
                 } catch (InterruptedException es) {
                     // TODO Auto-generated catch block
                     es.printStackTrace();
                 }
+                Thread threaden = new Thread(new Main(map));
+                threaden.start();
             }
         });
     }
-
     /**
      * @param args
      * @throws InterruptedException 

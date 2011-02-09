@@ -8,19 +8,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Main{
+public class Main implements Runnable{
 	static double longitude;
 	static double latitude;
 	JMapViewer map;
     public Main(){
         
     }
-    public void updatePoses(JMapViewer map) throws InterruptedException{
+    public Main(JMapViewer map){
         this.map = map;
-        Thread.sleep(5000);
+    }
+    public void run(){
         System.out.println("uppdaterar");
-        map.addMapMarker(new MapMarkerDot(getLatitude(), getLongitude()));
-        updatePoses(map);
+        System.out.println("-uppdaterar-");
+        MapMarkerDot marker = new MapMarkerDot(getLatitude(), getLongitude());
+        map.addMapMarker(marker);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        map.removeMapMarker(marker);
+        run();
     }
     void connect ( String portName ) throws Exception
     {
