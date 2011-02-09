@@ -122,6 +122,7 @@ public class Demo extends JFrame {
                 }
                 Thread threaden = new Thread(new Main(map));
                 threaden.start();
+                map.setDisplayPositionByLatLon(main.getLatitude(), main.getLongitude(), 13);
             }
         });
     }
