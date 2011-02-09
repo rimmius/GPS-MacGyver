@@ -8,12 +8,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Main
-{
+public class Main{
 	static double longitude;
 	static double latitude;
 	JMapViewer map;
     public Main(){
+        
+    }
+    public void updatePoses(JMapViewer map) throws InterruptedException{
+        this.map = map;
+        Thread.sleep(5000);
+        System.out.println("uppdaterar");
+        map.addMapMarker(new MapMarkerDot(getLatitude(), getLongitude()));
+        updatePoses(map);
     }
     void connect ( String portName ) throws Exception
     {

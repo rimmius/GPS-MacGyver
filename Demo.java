@@ -31,7 +31,7 @@ public class Demo extends JFrame {
 
     private static final long serialVersionUID = 1L;
     public static int counter = 0;
-    public Demo() {
+    public Demo() throws InterruptedException {
         super("JMapViewer Demo");
         setSize(400, 400);
         final JMapViewer map = new JMapViewer();
@@ -111,27 +111,27 @@ public class Demo extends JFrame {
        
         current.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                
+                Main main = new Main();
+                main.main(null);
+                counter++;
+                try {
+                    Thread.sleep(5000);
+                    map.addMapMarker(new MapMarkerDot(main.getLatitude(), main.getLongitude()));
+                    System.out.println("!!!!!!!" + main.getLatitude());
+                    System.out.println("!!!!!" + main.getLongitude());
+                } catch (InterruptedException es) {
+                    // TODO Auto-generated catch block
+                    es.printStackTrace();
+                }
             }
         });
-        Main main = new Main();
-        main.main(null);
-        counter++;
-        try {
-            Thread.sleep(5000);
-            map.addMapMarker(new MapMarkerDot(main.getLatitude(), main.getLongitude()));
-            System.out.println("!!!!!!!" + main.getLatitude());
-            System.out.println("!!!!!" + main.getLongitude());
-        } catch (InterruptedException es) {
-            // TODO Auto-generated catch block
-            es.printStackTrace();
-        }
     }
 
     /**
      * @param args
+     * @throws InterruptedException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         new Demo().setVisible(true);
     }
 
