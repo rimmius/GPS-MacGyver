@@ -104,6 +104,11 @@ public class Demo extends JFrame {
 
         //
         /**
+         * maxmirkia
+         */
+        map.addMapMarker(new MapMarkerDot(Color.BLUE, 49.814284999, 8.642065999));
+        map.setDisplayPositionByLatLon(49.814284999, 8.642065999, 15);
+        /**
          * Fredrik Gustafsson
          */
         JButton current = new JButton("Show current location");
