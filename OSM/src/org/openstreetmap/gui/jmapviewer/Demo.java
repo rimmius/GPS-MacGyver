@@ -115,7 +115,7 @@ public class Demo extends JFrame {
                 main.main(null);
                 counter++;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException es) {
                     // TODO Auto-generated catch block
                     es.printStackTrace();
