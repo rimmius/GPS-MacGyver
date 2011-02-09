@@ -15,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -99,7 +100,7 @@ public class Demo extends JFrame {
             }
         });
         panel.add(showZoomControls);
-        panel.add(button);
+       // panel.add(button);
         add(map, BorderLayout.CENTER);
 
         //
@@ -108,7 +109,19 @@ public class Demo extends JFrame {
          */
         JButton current = new JButton("Show current location");
         panel.add(current);
-       
+        JButton chooseCo = new JButton("Choose coordinates");
+        panel.add(chooseCo);
+        chooseCo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                String longitudeString = JOptionPane.showInputDialog(null,"Enter longitude","Longitude");
+                String latitudeString = JOptionPane.showInputDialog(null,"Enter latitude","Latitude");
+                double latitudeDouble = Double.parseDouble(latitudeString);
+                double longitudeDouble = Double.parseDouble(longitudeString);
+                MapMarkerDot marker = new MapMarkerDot(latitudeDouble, longitudeDouble);
+                map.addMapMarker(marker);
+            }
+        });
+        
         current.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 Main main = new Main();
