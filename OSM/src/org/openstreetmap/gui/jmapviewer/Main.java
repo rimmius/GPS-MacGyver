@@ -22,7 +22,7 @@ public class Main implements Runnable{
         System.out.println("uppdaterar");
         System.out.println("-uppdaterar-");
         MapMarkerDot marker = new MapMarkerDot(getLatitude(), getLongitude());
-        map.addMapMarker(marker,15);
+        map.addMapMarker(marker);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

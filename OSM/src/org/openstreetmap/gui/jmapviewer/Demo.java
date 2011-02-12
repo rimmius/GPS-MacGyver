@@ -19,7 +19,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+<<<<<<< HEAD
 import javax.swing.JMenuItem;
+=======
+import javax.swing.JOptionPane;
+>>>>>>> ca2546dd29bbf7b5b4b556ce15af101d67c510c3
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -105,7 +109,7 @@ public class Demo extends JFrame implements ActionListener{
             }
         });
         panel.add(showZoomControls);
-        panel.add(button);
+       // panel.add(button);
         add(map, BorderLayout.CENTER);
         
         /**
@@ -139,20 +143,33 @@ public class Demo extends JFrame implements ActionListener{
          */
         JButton current = new JButton("Show current location");
         panel.add(current);
-       
+        JButton chooseCo = new JButton("Choose coordinates");
+        panel.add(chooseCo);
+        chooseCo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                String longitudeString = JOptionPane.showInputDialog(null,"Enter longitude","Longitude");
+                String latitudeString = JOptionPane.showInputDialog(null,"Enter latitude","Latitude");
+                double latitudeDouble = Double.parseDouble(latitudeString);
+                double longitudeDouble = Double.parseDouble(longitudeString);
+                MapMarkerDot marker = new MapMarkerDot(latitudeDouble, longitudeDouble);
+                map.addMapMarker(marker);
+            }
+        });
+        
         current.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 Main main = new Main();
                 main.main(null);
                 counter++;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException es) {
                     // TODO Auto-generated catch block
                     es.printStackTrace();
                 }
                 Thread threaden = new Thread(new Main(map));
                 threaden.start();
+                map.setDisplayPositionByLatLon(main.getLatitude(), main.getLongitude(), 13);
             }
         });
     }
