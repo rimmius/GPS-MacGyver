@@ -4,10 +4,14 @@ package org.openstreetmap.gui.jmapviewer;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -15,7 +19,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -27,8 +33,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
  * @author Jan Peter Stotz
  *
  */
-public class Demo extends JFrame {
-
+public class Demo extends JFrame implements ActionListener{
+    private Component selectedComponent;
     private static final long serialVersionUID = 1L;
     public static int counter = 0;
     public Demo() throws InterruptedException {
@@ -101,7 +107,32 @@ public class Demo extends JFrame {
         panel.add(showZoomControls);
         panel.add(button);
         add(map, BorderLayout.CENTER);
-
+        
+        /**
+         * maxmirkia
+         */
+        
+        final JPopupMenu popUp = new JPopupMenu();
+        JMenuItem item = new JMenuItem("Set Destination");
+        item.addActionListener(this);
+        popUp.add(item);
+        int x,y;
+        map.addMouseListener( new MouseAdapter(  ) {
+            public void mousePressed(MouseEvent e) { checkPopup(e); }
+            public void mouseClicked(MouseEvent e) { checkPopup(e); }
+            public void mouseReleased(MouseEvent e) { checkPopup(e); }
+            private void checkPopup(MouseEvent e) {
+              if (e.isPopupTrigger()) {
+                selectedComponent = e.getComponent(  );
+                popUp.show(e.getComponent(  ), e.getX(  ), e.getY(  ));
+               // System.out.println("alloo");
+              }
+            }
+          });
+        map.addMapMarker(new MapMarkerDot(Color.BLUE, 49.814284999, 8.642065999));
+        //map.addMapMarker(new MapMarkerDot();
+        map.setDisplayPositionByLatLon(49.814284999, 8.642065999, 15);
+        map.add(new PopUp());
         //
         /**
          * Fredrik Gustafsson
@@ -129,6 +160,13 @@ public class Demo extends JFrame {
      * @param args
      * @throws InterruptedException 
      */
+    
+    /**
+     * maxmirkia
+     */
+    public void actionPerformed(ActionEvent e) {  
+        System.out.println();
+      }
     public static void main(String[] args) throws InterruptedException {
         new Demo().setVisible(true);
     }
