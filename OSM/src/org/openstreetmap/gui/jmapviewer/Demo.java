@@ -19,11 +19,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-<<<<<<< HEAD
 import javax.swing.JMenuItem;
-=======
 import javax.swing.JOptionPane;
->>>>>>> ca2546dd29bbf7b5b4b556ce15af101d67c510c3
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -41,10 +38,13 @@ public class Demo extends JFrame implements ActionListener{
     private Component selectedComponent;
     private static final long serialVersionUID = 1L;
     public static int counter = 0;
+    final JMapViewer map;
+    int mouseY;
+    int mouseX;
     public Demo() throws InterruptedException {
         super("JMapViewer Demo");
         setSize(400, 400);
-        final JMapViewer map = new JMapViewer();
+         map = new JMapViewer();
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -129,7 +129,8 @@ public class Demo extends JFrame implements ActionListener{
               if (e.isPopupTrigger()) {
                 selectedComponent = e.getComponent(  );
                 popUp.show(e.getComponent(  ), e.getX(  ), e.getY(  ));
-               // System.out.println("alloo");
+                mouseX = e.getX();
+                mouseY = e.getY();
               }
             }
           });
@@ -160,7 +161,6 @@ public class Demo extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e){
                 Main main = new Main();
                 main.main(null);
-                counter++;
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException es) {
@@ -181,9 +181,10 @@ public class Demo extends JFrame implements ActionListener{
     /**
      * maxmirkia
      */
-    public void actionPerformed(ActionEvent e) {  
-        System.out.println();
-      }
+    public void actionPerformed(ActionEvent e) {
+        map.addMapMarker(new MapMarkerDot(map.getPosition(mouseX, mouseY).getLat(), map.getPosition(mouseX, mouseY).getLon()));
+        
+    }
     public static void main(String[] args) throws InterruptedException {
         new Demo().setVisible(true);
     }

@@ -122,8 +122,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        //        Point screenPoint = event.getLocationOnScreen();
-        //        Coordinate c = getPosition(screenPoint);
+        //Point screenPoint = event.getLocationOnScreen();
+        //Coordinate c = getPosition(screenPoint);
+        //System.out.println(c);
         return super.getToolTipText(event);
     }
 
