@@ -21,7 +21,8 @@ public class MapMarkerDot implements MapMarker {
     double lat;
     double lon;
     Color color;
-
+    JMapViewer map;
+    Demo demo;
     public MapMarkerDot(double lat, double lon) {
         this(Color.YELLOW, lat, lon);
     }
@@ -31,6 +32,7 @@ public class MapMarkerDot implements MapMarker {
         this.color = color;
         this.lat = lat;
         this.lon = lon;
+
     }
 
     public double getLat() {
@@ -48,8 +50,8 @@ public class MapMarkerDot implements MapMarker {
         g.fillOval(position.x - size_h, position.y - size_h, size, size);
         g.setColor(Color.BLACK);
         g.drawOval(position.x - size_h, position.y - size_h, size, size);
+       
     }
-
     @Override
     public String toString() {
         return "MapMarker at " + lat + " " + lon;

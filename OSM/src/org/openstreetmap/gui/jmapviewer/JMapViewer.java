@@ -17,7 +17,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.ArrayList;
+import java.util.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -84,7 +85,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     private String attrTermsUrl;
     public static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     public static final Font ATTR_LINK_FONT;
-
+    ArrayList<Point> nodes;
+    
     static {
         HashMap<TextAttribute, Integer> aUnderline = new HashMap<TextAttribute, Integer>();
         aUnderline.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -99,8 +101,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * retrieving the tiles.
      */
     public JMapViewer() {
+        
         this(new MemoryTileCache(), 4);
         new DefaultMapController(this);
+        
     }
 
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
@@ -531,8 +535,16 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         if (p != null) {
             marker.paint(g, p);
         }
+        if (mapMarkerList.size() > 1){
+            for (int i = 1; i < mapMarkerList.size(); i++){
+                int x1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getX();
+                int y1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getY();
+                int x2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getX();
+                int y2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getY();
+                g.drawLine(x1, y1, x2, y2);
+            }
+        }
     }
-
     /**
      * Moves the visible map pane.
      * 

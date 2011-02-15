@@ -6,6 +6,8 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -13,6 +15,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.*;
+import java.io.*;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,6 +45,11 @@ public class Demo extends JFrame implements ActionListener{
     final JMapViewer map;
     int mouseY;
     int mouseX;
+    public static ArrayList<MapMarkerDot> dots = new ArrayList<MapMarkerDot>();
+    TileController tileController;
+    boolean paintIt = false;
+    double myLong;
+    double myLat;
     public Demo() throws InterruptedException {
         super("JMapViewer Demo");
         setSize(400, 400);
@@ -113,7 +122,7 @@ public class Demo extends JFrame implements ActionListener{
         add(map, BorderLayout.CENTER);
         
         /**
-         * maxmirkia
+         * maxmirkia, Fredrik Gustafsson
          */
         
         final JPopupMenu popUp = new JPopupMenu();
@@ -134,9 +143,11 @@ public class Demo extends JFrame implements ActionListener{
               }
             }
           });
-        map.addMapMarker(new MapMarkerDot(Color.BLUE, 49.814284999, 8.642065999));
+        //map.addMapMarker(new MapMarkerDot(Color.BLUE, 57.71031468792876, 11.925959587097168));
         //map.addMapMarker(new MapMarkerDot();
-        map.setDisplayPositionByLatLon(49.814284999, 8.642065999, 15);
+        map.setDisplayPositionByLatLon(57.71031468792876, 11.925959587097168, 15);
+        
+        map.addMapMarker(new MapMarkerDot(57.71031468792876, 11.925959587097168));
         map.add(new PopUp());
         //
         /**
@@ -179,14 +190,16 @@ public class Demo extends JFrame implements ActionListener{
      */
     
     /**
-     * maxmirkia
+     * maxmirkia, Fredrik Gustafsson
      */
     public void actionPerformed(ActionEvent e) {
-        map.addMapMarker(new MapMarkerDot(map.getPosition(mouseX, mouseY).getLat(), map.getPosition(mouseX, mouseY).getLon()));
-        
+        MapMarkerDot temp = new MapMarkerDot(Color.BLUE, map.getPosition(mouseX, mouseY).getLat(), map.getPosition(mouseX, mouseY).getLon());
+        map.addMapMarker(temp);
+        dots.add(temp);
+        System.out.println(temp.lat + ", " + temp.lon);
     }
+   
     public static void main(String[] args) throws InterruptedException {
         new Demo().setVisible(true);
     }
-
 }
