@@ -1,4 +1,4 @@
-package org.openstreetmap.gui.jmapviewer;
+package org.openstreetmap.gui.jmapviewer.interfaces;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -8,38 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Main implements Runnable{
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+
+public class Main
+{
 	static double longitude;
 	static double latitude;
-	JMapViewer map;
-    public Main(){
-        
+    public Main()
+    {
     }
-    /**
-     * Fredrik Gustafsson
-     * @param map
-     */
-    public Main(JMapViewer map){
-        this.map = map;
-    }
-    /**
-     * Fredrik Gustafsson
-     * 
-     */
-    public void run(){
-        System.out.println("uppdaterar");
-        System.out.println("-uppdaterar-");
-        MapMarkerDot marker = new MapMarkerDot(getLatitude(), getLongitude());
-        map.addMapMarker(marker);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        map.removeMapMarker(marker);
-        run();
-    }
+    
     void connect ( String portName ) throws Exception
     {
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -73,9 +51,7 @@ public class Main implements Runnable{
         public SerialReader (InputStream in){
             this.in = in;
         }
-        /**
-         * Fredrik Gustafsson
-         */
+        
         public void run (){
             byte[] buffer = new byte[1024];
             int len = -1;
@@ -88,6 +64,7 @@ public class Main implements Runnable{
                 while ( ( len = this.in.read(buffer)) > -1 )
                 {
                 	String line = new String(buffer, 0, len);
+                	System.out.print(line);
                 	if (line.equals("$")){
                 		record = false;
                 		dollar = true;
@@ -104,42 +81,37 @@ public class Main implements Runnable{
                 		String latitudeString = strings[2];
                 		String longitudeString = strings[4];
                 		
-                		if (latitudeString.length() > 4 && longitudeString.length() > 4){
-                    		String latitudeShort = latitudeString.substring(2, latitudeString.length());
-                    		System.out.println(latitudeShort);
-                    		double latitudeDouble = Double.parseDouble(latitudeShort);
-                    		latitudeDouble = latitudeDouble / 60;
-                    		String latitudeBig = latitudeString.substring(0,2);
-                    		double latitudeBigInt = Double.parseDouble(latitudeBig);
-                    		latitudeDouble = latitudeBigInt + latitudeDouble;
-                    		
-                    		String longitudeShort = longitudeString.substring(3, longitudeString.length());
-                    		double longitudeDouble = Double.parseDouble(longitudeShort);
-                    		longitudeDouble = longitudeDouble / 60;
-                    		String longitudeBig = longitudeString.substring(0,3);
-                    		double longitudeBigInt = Double.parseDouble(longitudeBig);
-                    		longitudeDouble = longitudeBigInt + longitudeDouble;
-                    		
-                    		longitude = longitudeDouble;
-                    		latitude = latitudeDouble;
-                    		System.out.println(strings[2] + ", " + strings[4]);
-                		}
+                		String latitudeShort = latitudeString.substring(2, latitudeString.length());
+                		System.out.println(latitudeShort);
+                		double latitudeDouble = Double.parseDouble(latitudeShort);
+                		latitudeDouble = latitudeDouble / 60;
+                		String latitudeBig = latitudeString.substring(0,2);
+                		double latitudeBigInt = Double.parseDouble(latitudeBig);
+                		latitudeDouble = latitudeBigInt + latitudeDouble;
+                		
+                		String longitudeShort = longitudeString.substring(3, longitudeString.length());
+                		double longitudeDouble = Double.parseDouble(longitudeShort);
+                		longitudeDouble = longitudeDouble / 60;
+                		String longitudeBig = longitudeString.substring(0,3);
+                		double longitudeBigInt = Double.parseDouble(longitudeBig);
+                		longitudeDouble = longitudeBigInt + longitudeDouble;
+                		
+                		longitude = longitudeDouble;
+                		latitude = latitudeDouble;
+                		System.out.println(strings[2] + ", " + strings[4]);
                 		Main main = new Main();
                 		System.out.println("Latitude: " + main.getLatitude() + ", Longitude: " + main.getLongitude());
                 		checkThisLine.delete(0, checkThisLine.length());
                 	}
                 	if (line2.length() == 6 && record == false){
-                	    dollar = false;
                 		String thisLine = line2.toString();
                 		String gpgga = "$GPGGA";
                 		if (thisLine.equals(gpgga)){
                 			record = true;
                 		}
-                		
+                		dollar = false;
                 		line2.delete(0, line2.length());
                 	}
-                	if (line2.length() > 6)
-                	    line2.delete(0, line2.length());
                 }
             }
             catch ( IOException e ){
@@ -150,22 +122,21 @@ public class Main implements Runnable{
     
     public static void main ( String[] args )
     {
-        CommPortIdentifier portId;
+    	CommPortIdentifier portId;
         Enumeration en = CommPortIdentifier.getPortIdentifiers();
         Vector listData = new Vector(8);
-        String port = new String();
 
         // Walk through the list of port identifiers and, if it
         // is a serial port, add its name to the list.
         while (en.hasMoreElements()) {
             portId = (CommPortIdentifier) en.nextElement();
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                port = portId.getName();
+                System.out.println(portId.getName());
             }
         }
         try
         {
-            (new Main()).connect(port);
+            (new Main()).connect("/dev/ttyUSB2");
         }
         catch ( Exception e )
         {

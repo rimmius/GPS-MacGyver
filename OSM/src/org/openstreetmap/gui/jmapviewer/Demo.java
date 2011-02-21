@@ -28,6 +28,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import javax.swing.JFileChooser;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
@@ -50,7 +70,8 @@ public class Demo extends JFrame implements ActionListener{
     boolean paintIt = false;
     double myLong;
     double myLat;
-    public Demo() throws InterruptedException {
+    String filename;
+    public Demo() throws InterruptedException, SAXException, IOException {
         super("JMapViewer Demo");
         setSize(400, 400);
          map = new JMapViewer();
@@ -183,6 +204,18 @@ public class Demo extends JFrame implements ActionListener{
                 map.setDisplayPositionByLatLon(main.getLatitude(), main.getLongitude(), 13);
             }
         });
+        File f;
+        JFileChooser jfc = new JFileChooser();
+        jfc.showOpenDialog(null);
+        f = new File(jfc.getSelectedFile().getPath());
+        
+        filename = f.toString();
+        System.out.println(filename);
+        InputSource inputSource = new InputSource(new FileReader(filename));
+        OsmParser osmParser = new OsmParser();
+        osmParser.parse(inputSource);
+        //MapMarkerDot temp = new MapMarkerDot(Color.BLUE, OsmParser.nodes.get(0).getLat(), OsmParser.nodes.get(0).getLon());
+       //map.addMapMarker(temp);
     }
     /**
      * @param args
@@ -199,7 +232,7 @@ public class Demo extends JFrame implements ActionListener{
         System.out.println(temp.lat + ", " + temp.lon);
     }
    
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, SAXException, IOException {
         new Demo().setVisible(true);
     }
 }

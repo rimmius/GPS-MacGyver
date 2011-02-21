@@ -14,10 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -536,13 +532,25 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             marker.paint(g, p);
         }
         if (mapMarkerList.size() > 1){
-            for (int i = 1; i < mapMarkerList.size(); i++){
+            int x1 = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getX();
+            int y1 = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getY();
+            
+            for (int i = 0; i < OsmParser.nodes.size(); i++){
+                int x2 = (int)getMapPosition(OsmParser.nodes.get(i).getLat(), OsmParser.nodes.get(i).getLon(), false).getX();
+                int y2 = (int)getMapPosition(OsmParser.nodes.get(i).getLat(), OsmParser.nodes.get(i).getLon(), false).getY();
+                if (x1 <= x2+10 && y1 == y2){
+                    //g.drawLine(x1, y1, x2, y2);
+                    System.out.println(x2);
+                    break;
+                }
+            }
+           /** for (int i = 1; i < mapMarkerList.size(); i++){
                 int x1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getX();
                 int y1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getY();
                 int x2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getX();
                 int y2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getY();
                 g.drawLine(x1, y1, x2, y2);
-            }
+            }**/
         }
     }
     /**
