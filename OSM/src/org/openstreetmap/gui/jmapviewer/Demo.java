@@ -168,7 +168,7 @@ public class Demo extends JFrame implements ActionListener{
         //map.addMapMarker(new MapMarkerDot();
         map.setDisplayPositionByLatLon(57.71031468792876, 11.925959587097168, 15);
         
-        map.addMapMarker(new MapMarkerDot(57.71031468792876, 11.925959587097168));
+        map.addMapMarker(new MapMarkerDot(57.706855655355845, 11.937026381492615));
         map.add(new PopUp());
         //
         /**
