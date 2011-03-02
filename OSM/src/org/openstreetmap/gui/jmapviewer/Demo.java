@@ -193,6 +193,7 @@ public class Demo extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e){
                 Main main = new Main();
                 main.main(null);
+                
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException es) {

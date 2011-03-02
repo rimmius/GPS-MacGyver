@@ -534,28 +534,22 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         if (mapMarkerList.size() > 1){
             int x1 = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getX();
             int y1 = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getY();
-            int nearest = -1;
-            double bestDistanceFoundYetLat = 1000;
-            double bestDistanceFoundYetLon = 1000;
-            int bestDistanceSoFar = Integer.MAX_VALUE;
-            for (int i = 0; i < OsmParser.nodes.size(); i++){
-                if(OsmParser.nodes.get(i).getLat() == mapMarkerList.get(0).getLat() && OsmParser.nodes.get(i).getLat() == mapMarkerList.get(0).getLat())
-                    nearest = i;
-                else {
-                    double d = Math.abs(mapMarkerList.get(0).getLat() - OsmParser.nodes.get(i).getLat());
-                    double d2 = Math.abs(mapMarkerList.get(0).getLon() - OsmParser.nodes.get(i).getLon());
-                    if (d < bestDistanceFoundYetLat && d2 < bestDistanceFoundYetLon) {
-                        System.out.println(OsmParser.nodes.get(i).getLat() + ", " + OsmParser.nodes.get(i).getLon());
-                      nearest = i;
-                      OsmParser.nodes.set(0, OsmParser.nodes.get(i));
-                      bestDistanceFoundYetLat = d;
-                      bestDistanceFoundYetLon = d2;
-                    }
-                }
-            }
-            int x2 = (int)getMapPosition(OsmParser.nodes.get(nearest).getLat(), OsmParser.nodes.get(nearest).getLon(), false).getX();
-            int y2 = (int)getMapPosition(OsmParser.nodes.get(nearest).getLat(), OsmParser.nodes.get(nearest).getLon(), false).getY();
-            g.drawLine(x1, y1, x2, y2);
+            double lat1 = mapMarkerList.get(0).getLat();
+            double lon1 = mapMarkerList.get(0).getLon();
+            
+            double lat2 = mapMarkerList.get(1).getLat();
+            double lon2 = mapMarkerList.get(1).getLon();
+            
+            int nRadius = 6371; // Earth's radius in Kilometers
+            // Get the difference between our two points
+            // then convert the difference into radians
+            double nDLat = (lat2 - lat1) * (Math.PI/180);
+            double nDLon = (lon2 - lon1) * (Math.PI/180);
+            double nA = Math.pow(Math.sin(nDLat/2), 2 ) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(nDLon/2), 2);
+         
+            double nC = 2 * Math.atan2( Math.sqrt(nA), Math.sqrt( 1 - nA ));
+            double nD = nRadius * nC;
+            System.out.println(nD);
            /** for (int i = 1; i < mapMarkerList.size(); i++){
                 int x1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getX();
                 int y1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getY();
