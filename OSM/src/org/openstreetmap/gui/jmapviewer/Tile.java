@@ -16,12 +16,6 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-/**
- * Holds one map tile. Additionally the code for loading the tile image and
- * painting it is also included in this class.
- *
- * @author Jan Peter Stotz
- */
 public class Tile {
 
     /**

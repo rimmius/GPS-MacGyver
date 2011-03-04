@@ -1,7 +1,5 @@
 package org.openstreetmap.gui.jmapviewer;
 
-//License: GPL. Copyright 2008 by Jan Peter Stotz
-
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,13 +49,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-/**
- *
- * Demonstrates the usage of {@link JMapViewer}
- *
- * @author Jan Peter Stotz
- *
- */
 public class Demo extends JFrame implements ActionListener{
     private Component selectedComponent;
     private static final long serialVersionUID = 1L;

@@ -13,11 +13,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-/**
- * A {@link TileLoader} implementation that loads tiles from OSM.
- *
- * @author Jan Peter Stotz
- */
 public class OsmTileLoader implements TileLoader {
 
     /**

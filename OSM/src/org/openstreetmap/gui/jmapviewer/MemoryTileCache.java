@@ -8,13 +8,6 @@ import java.util.logging.Logger;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-/**
- * {@link TileCache} implementation that stores all {@link Tile} objects in
- * memory up to a certain limit ({@link #getCacheSize()}). If the limit is
- * exceeded the least recently used {@link Tile} objects will be deleted.
- *
- * @author Jan Peter Stotz
- */
 public class MemoryTileCache implements TileCache {
 
     protected static final Logger log = Logger.getLogger(MemoryTileCache.class.getName());

@@ -1,7 +1,5 @@
 package org.openstreetmap.gui.jmapviewer;
 
-//License: GPL. Copyright 2008 by Jan Peter Stotz
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,21 +27,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-/**
- * 
- * Provides a simple panel that displays pre-rendered map tiles loaded from the
- * OpenStreetMap project.
- * 
- * @author Jan Peter Stotz
- * 
- */
+
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Vectors for clock-wise tile painting
-     */
     protected static final Point[] move = { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
 
     public static final int MAX_ZOOM = 22;

@@ -6,15 +6,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A generic class that processes a list of {@link Runnable} one-by-one using
- * one or more {@link Thread}-instances. The number of instances varies between
- * 1 and {@link #WORKER_THREAD_MAX_COUNT} (default: 8). If an instance is idle
- * more than {@link #WORKER_THREAD_TIMEOUT} seconds (default: 30), the instance
- * ends itself.
- *
- * @author Jan Peter Stotz
- */
 public class JobDispatcher {
 
     private static final JobDispatcher instance = new JobDispatcher();
