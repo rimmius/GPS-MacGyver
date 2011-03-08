@@ -27,8 +27,6 @@ public class Main implements Runnable{
      * 
      */
     public void run(){
-        System.out.println("uppdaterar");
-        System.out.println("-uppdaterar-");
         MapMarkerDot marker = new MapMarkerDot(getLatitude(), getLongitude());
         map.mapMarkerList.add(0, marker); // always inserts current pos at pos 0 in mapmarkerlist.
         //map.addMapMarker(marker); <-- creates new dot, works fine.

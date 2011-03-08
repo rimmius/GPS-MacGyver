@@ -1,6 +1,8 @@
 package org.openstreetmap.gui.jmapviewer;
 
 
+
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,10 +33,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 import javax.swing.JFileChooser;
@@ -62,6 +66,9 @@ public class Demo extends JFrame implements ActionListener{
     double myLong;
     double myLat;
     String filename;
+    OsmParser parser;
+    public static List<Vertex> path = null;
+    public static List<Vertex> shortestPath = null;
     public Demo() throws InterruptedException, SAXException, IOException {
         super("JMapViewer Demo");
         setSize(400, 400);
@@ -102,8 +109,6 @@ public class Demo extends JFrame implements ActionListener{
             }
         });
         map.setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
-        panel.add(tileSourceSelector);
-        panel.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map.getMapMarkersVisible());
         showMapMarker.addActionListener(new ActionListener() {
@@ -112,25 +117,7 @@ public class Demo extends JFrame implements ActionListener{
             }
         });
         panel.add(showMapMarker);
-        final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
-        showTileGrid.setSelected(map.isTileGridVisible());
-        showTileGrid.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                map.setTileGridVisible(showTileGrid.isSelected());
-            }
-        });
-        panel.add(showTileGrid);
-        final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
-        showZoomControls.setSelected(map.getZoomContolsVisible());
-        showZoomControls.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                map.setZoomContolsVisible(showZoomControls.isSelected());
-            }
-        });
-        panel.add(showZoomControls);
-       // panel.add(button);
+        
         add(map, BorderLayout.CENTER);
         
         /**
@@ -196,6 +183,13 @@ public class Demo extends JFrame implements ActionListener{
                 map.setDisplayPositionByLatLon(main.getLatitude(), main.getLongitude(), 13);
             }
         });
+        JButton resetDest = new JButton("Reset destination");
+        resetDest.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                resetShortestPath();
+            }
+        });
+        panel.add(resetDest);
         File f;
         JFileChooser jfc = new JFileChooser();
         jfc.showOpenDialog(null);
@@ -203,11 +197,25 @@ public class Demo extends JFrame implements ActionListener{
         
         filename = f.toString();
         System.out.println(filename);
-        InputSource inputSource = new InputSource(new FileReader(filename));
-        OsmParser osmParser = new OsmParser();
-        osmParser.parse(inputSource);
-        //MapMarkerDot temp = new MapMarkerDot(Color.BLUE, OsmParser.nodes.get(0).getLat(), OsmParser.nodes.get(0).getLon());
-       //map.addMapMarker(temp);
+        JFrame waitingF = new JFrame("Please wait");
+        JPanel wPanel = new JPanel();
+        JLabel label = new JLabel("Please wait while loading the tiles.");
+        waitingF.setSize(300, 150);
+        waitingF.setLocationRelativeTo(null);
+        waitingF.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        waitingF.setVisible(true);
+        wPanel.add(label);
+        waitingF.add(wPanel);
+        
+//        InputSource inputSource = new InputSource(new FileReader(filename));
+            Thread thread1 = new Thread(new OsmParser(filename));
+//            OsmParser osmParser = new OsmParser();
+//            osmParser.parse(inputSource);
+            thread1.run();
+//        MapMarkerDot temp = new MapMarkerDot(Color.BLUE, 57.70762085506806, 11.93789005279541);
+//        map.addMapMarker(temp);
+//        calcDistance();
+            waitingF.dispose();
     }
     /**
      * @param args
@@ -222,8 +230,90 @@ public class Demo extends JFrame implements ActionListener{
         map.addMapMarker(temp);
         dots.add(temp);
         System.out.println(temp.lat + ", " + temp.lon);
+        if (map.mapMarkerList.size() > 1){
+            calcDistance();
+        }
     }
-   
+    public void calcDistance(){
+        double lat1 = map.mapMarkerList.get(0).getLat();
+        double lon1 = map.mapMarkerList.get(0).getLon();
+        System.out.println(lat1 + ", " + lon1);
+            
+        double lat2 = map.mapMarkerList.get(1).getLat();
+        double lon2 = map.mapMarkerList.get(1).getLon();
+           
+        int nearest = nearestVertex(lon1, lat1);
+        int nearest2 = nearestVertex(lon2, lat2); 
+    
+        Vertex source = OsmParser.vertices.get(nearest);
+        Vertex target = OsmParser.vertices.get(nearest2);
+        OsmParser.vertices.remove(nearest);
+        OsmParser.vertices.remove(nearest2);
+        OsmParser.vertices.set(0, source);
+        OsmParser.vertices.add(target);
+        computePaths(OsmParser.vertices.get(0));
+        
+        path = getShortPathTo(OsmParser.vertices.get(OsmParser.vertices.size()-1));
+        shortestPath = new ArrayList<Vertex>();
+        shortestPath = path;
+    }
+    public int nearestVertex(double lon1, double lat1){
+        double minDistance = 1000;
+        int nearest = -1;
+        
+        for (int i = 0; i < OsmParser.vertices.size(); i++) {
+            double checkThisValue = Math.sqrt(((lon1-OsmParser.vertices.get(i).lon) * (lon1-OsmParser.vertices.get(i).lon)) + ((lat1 - OsmParser.vertices.get(i).lat) * (lat1 - OsmParser.vertices.get(i).lat)));
+            if (checkThisValue < minDistance && OsmParser.vertices.get(i).adjacencies.size() > 0 && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("building")){
+                if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("raceway")){
+
+                    if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("coastline")){
+                        minDistance = checkThisValue;
+                        nearest = i;
+                    }
+                }
+            }
+        }
+        return nearest;
+    }
+    
+    public static void computePaths(Vertex source){
+        source.minDistance = 0;
+        PriorityQueue<Vertex> vqueue = new PriorityQueue<Vertex>();
+        vqueue.add(source);
+        
+        while(!vqueue.isEmpty()){
+            Vertex u = vqueue.poll();
+            for (Edge e : u.adjacencies){
+                Vertex v = e.target;
+                double weight = e.weight;
+                double distanceThroughU = u.minDistance + weight;
+                
+                if (distanceThroughU < v.minDistance){
+                    vqueue.remove(v);
+                    v.minDistance = distanceThroughU;
+                    v.previous = u;
+                    vqueue.add(v);
+                }
+            }
+        }
+        
+    }
+    public static List<Vertex> getShortPathTo(Vertex target){
+        List<Vertex> path = new ArrayList<Vertex>();
+        for (Vertex vertex = target; vertex != null; vertex = vertex.previous){
+            path.add(vertex);
+        }
+        Collections.reverse(path);
+        return path;
+    }
+    public static List<Vertex> getShortestPath(){
+        return shortestPath;
+    }
+    public void resetShortestPath(){
+        shortestPath = null;
+        map.mapMarkerList.remove(1);
+        map.repaint();
+    }
     public static void main(String[] args) throws InterruptedException, SAXException, IOException {
         new Demo().setVisible(true);
     }

@@ -16,9 +16,9 @@ public class PrintingOsmParser extends OsmParser
 	public static void main(String[] args) throws SAXException, IOException
 	{
 	    
-		InputSource inputSource = new InputSource(new FileReader(getPath()));
+		//InputSource inputSource = new InputSource(new FileReader(getPath()));
 		OsmParser osmParser = new PrintingOsmParser();
-		osmParser.parse(inputSource);
+		//osmParser.parse(inputSource);
 		
 		System.err.println("nodes: "+osmParser.getNodeCount()
 				+",ways: "+osmParser.getWayCount());
