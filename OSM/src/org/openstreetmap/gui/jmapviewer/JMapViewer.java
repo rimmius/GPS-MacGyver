@@ -1,9 +1,14 @@
 package org.openstreetmap.gui.jmapviewer;
 
+
+
+
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
@@ -13,12 +18,15 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import macgyver.*;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
@@ -27,7 +35,14 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-
+/**
+ * 
+ * Provides a simple panel that displays pre-rendered map tiles loaded from the
+ * OpenStreetMap project.
+ * 
+ * @author Jan Peter Stotz
+ * 
+ */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
     private static final long serialVersionUID = 1L;
@@ -37,7 +52,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     public static final int MAX_ZOOM = 22;
     public static final int MIN_ZOOM = 0;
 
-    protected List<MapMarker> mapMarkerList;
+    public static List<MapMarker> mapMarkerList;
     protected List<MapRectangle> mapRectangleList;
 
     protected boolean mapMarkersVisible;
@@ -510,47 +525,33 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
         paintAttribution(g);
     }
-
+    
     /**
      * Paint a single marker.
      */
-    OsmParser parser;
     protected void paintMarker(Graphics g, MapMarker marker) {
         Point p = getMapPosition(marker.getLat(), marker.getLon());
         if (p != null) {
             marker.paint(g, p);
         }
+        /**
+         * Author: Fredrik Gustafsson
+         */
         if (mapMarkerList.size() > 1){
             List<Vertex> shortestPath = Demo.getShortestPath();
             if (shortestPath != null){
-                System.out.println(shortestPath);
-                int curPosX = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getX();
-                int curPosY = (int)getMapPosition(mapMarkerList.get(0).getLat(), mapMarkerList.get(0).getLon(), false).getY();
-                int destPosX = (int)getMapPosition(mapMarkerList.get(1).getLat(), mapMarkerList.get(1).getLon(), false).getX();
-                int destPosY = (int)getMapPosition(mapMarkerList.get(1).getLat(), mapMarkerList.get(1).getLon(), false).getY();
-
-                int firstX = (int)getMapPosition(shortestPath.get(0).lat, shortestPath.get(0).lon, false).getX();
-                int firstY = (int)getMapPosition(shortestPath.get(0).lat, shortestPath.get(0).lon, false).getY();
-                int lastX = (int)getMapPosition(shortestPath.get(shortestPath.size()-1).lat, shortestPath.get(shortestPath.size()-1).lon, false).getX();
-                int lastY = (int)getMapPosition(shortestPath.get(shortestPath.size()-1).lat, shortestPath.get(shortestPath.size()-1).lon, false).getY();
-
+                Graphics2D g2d = (Graphics2D)g;
+                int width = 2;
+                g2d.setStroke(new BasicStroke(width));
+                g2d.setColor(Color.BLUE);
                 for (int i = 1; i < shortestPath.size(); i++){
-                    int x1 = (int)getMapPosition(shortestPath.get(i).lat, shortestPath.get(i).lon, false).getX();
-                    int y1 = (int)getMapPosition(shortestPath.get(i).lat, shortestPath.get(i).lon, false).getY();
-                    int x2 = (int)getMapPosition(shortestPath.get(i-1).lat, shortestPath.get(i-1).lon, false).getX();
-                    int y2 = (int)getMapPosition(shortestPath.get(i-1).lat, shortestPath.get(i-1).lon, false).getY();
-                    g.drawLine(x1, y1, x2, y2); 
+                    int x1 = (int)getMapPosition(shortestPath.get(i-1).lat, shortestPath.get(i-1).lon, false).getX();
+                    int y1 = (int)getMapPosition(shortestPath.get(i-1).lat, shortestPath.get(i-1).lon, false).getY();
+                    int x2 = (int)getMapPosition(shortestPath.get(i).lat, shortestPath.get(i).lon, false).getX();
+                    int y2 = (int)getMapPosition(shortestPath.get(i).lat, shortestPath.get(i).lon, false).getY();
+                    g2d.drawLine(x1, y1, x2, y2); 
                 }
-                g.drawLine(curPosX, curPosY, firstX, firstY);
-                g.drawLine(destPosX, destPosY, lastX, lastY);
             }
-           /** for (int i = 1; i < mapMarkerList.size(); i++){
-                int x1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getX();
-                int y1 = (int)getMapPosition(mapMarkerList.get(i).getLat(), mapMarkerList.get(i).getLon(), false).getY();
-                int x2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getX();
-                int y2 = (int)getMapPosition(mapMarkerList.get(i-1).getLat(), mapMarkerList.get(i-1).getLon(), false).getY();
-                g.drawLine(x1, y1, x2, y2);
-            }**/
         }
     }
     /**

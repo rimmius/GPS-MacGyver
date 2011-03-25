@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/24706/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images
+END
+bing_maps.png
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/!svn/ver/24706/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images/bing_maps.png
+END
+plus.png
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/!svn/ver/9095/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images/plus.png
+END
+hourglass.png
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/!svn/ver/9095/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images/hourglass.png
+END
+error.png
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/!svn/ver/11783/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images/error.png
+END
+minus.png
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/9095/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/images/minus.png
+END
