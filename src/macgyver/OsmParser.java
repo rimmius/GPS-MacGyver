@@ -133,7 +133,7 @@ public class OsmParser implements Runnable{
 	            break;
 //    	    Vertex number1 = bSearch(nodeIdList.get(j), 0, vertices.size()-1);
 //    	    Vertex number2 = bSearch(nodeIdList.get(j+1), 0, vertices.size()-1);
-	        if (tags.containsKey("highway")){
+//	        if (tags.containsKey("highway")){
 	        int number1Int = hashMap.get(Long.parseLong(nodeIdList.get(j)));
 	        Vertex number1 = vertices.get(number1Int);
 	        int number2Int = hashMap.get(Long.parseLong(nodeIdList.get(j+1)));
@@ -144,7 +144,7 @@ public class OsmParser implements Runnable{
             number1.adjacencies.add(temp);
     	    if (!temp.tags.containsValue("oneway"))
     	        number2.adjacencies.add(new Edge(number1, distance, tags));
-	        }
+//	        }
 	    }
 	    
 	}

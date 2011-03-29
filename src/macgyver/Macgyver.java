@@ -1,8 +1,5 @@
 package macgyver;
 
-
-
-
 import org.openstreetmap.*;
 
 
@@ -15,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +24,7 @@ import java.io.IOException;
 import java.util.*;
 import java.io.*;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -90,6 +89,7 @@ public class Macgyver extends JFrame{
     static int latestTarget;
     JPanel panel = new JPanel();
     JLabel distlabel = new JLabel();
+
     public Macgyver() throws InterruptedException, SAXException, IOException {
         super("GPS MacGyver");
         setSize(400, 400);
@@ -213,6 +213,7 @@ public class Macgyver extends JFrame{
        
         map.setDisplayPositionByLatLon(57.706855655355845, 11.937026381492615, 13);
         map.addMapMarker(new MapMarkerDot(57.706855655355845, 11.937026381492615));
+        
         map.add(new PopUp());
         //
         /**
@@ -269,7 +270,7 @@ public class Macgyver extends JFrame{
         wPanel.add(label);
         waitingF.add(wPanel);
         
-        thread1 = new Thread(new OsmParser("gbg239.osm"));
+        thread1 = new Thread(new OsmParser("gbglast.osm"));
         thread1.run();
         waitingF.dispose();
         setVisible(true);
@@ -387,23 +388,30 @@ public class Macgyver extends JFrame{
     public int nearestVertex(double lon1, double lat1){
         double minDistance = 1000;
         int nearest = -1;
-        
+        System.out.println("something");
         for (int i = 0; i < OsmParser.vertices.size(); i++) {
             //double checkThisValue = Math.sqrt(((lon1-OsmParser.vertices.get(i).lon) * (lon1-OsmParser.vertices.get(i).lon)) + ((lat1 - OsmParser.vertices.get(i).lat) * (lat1 - OsmParser.vertices.get(i).lat)));
             double checkThisValue = getDistance(lon1, lat1, OsmParser.vertices.get(i).lon, OsmParser.vertices.get(i).lat);
             if (checkThisValue < 0){
                 checkThisValue = checkThisValue *-1;
             }
-            if (checkThisValue < minDistance && OsmParser.vertices.get(i).adjacencies.size() > 0 && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("building") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.isEmpty() && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("school")){
-                if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("raceway")){
-                    if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("construction")){
-                        if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("coastline")){
-                            if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("golf_course")){
-                                if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("parking")){
-                                    if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("railway")){
-                                        if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("waterway") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("fixme") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("natural") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("boundary") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("barrier")){
-                                            minDistance = checkThisValue;
-                                            nearest = i;
+            if (checkThisValue < minDistance && OsmParser.vertices.get(i).adjacencies.size() > 0){
+                if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("building") && !OsmParser.vertices.get(i).adjacencies.get(0).tags.isEmpty() && !OsmParser.vertices.get(0).adjacencies.get(0).tags.containsValue("school")){
+                    if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("raceway")){
+                        if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("construction")){
+                            if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("coastline")){
+                                if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("golf_course")){
+                                    if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("parking")){
+                                        if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("railway")){
+                                            if (!OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("waterway") && 
+                                                    !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("fixme") && 
+                                                    !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("natural") && 
+                                                    !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("boundary") && 
+                                                    !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsKey("barrier") && 
+                                                    !OsmParser.vertices.get(i).adjacencies.get(0).tags.containsValue("bus")){
+                                                minDistance = checkThisValue;
+                                                nearest = i;
+                                            }
                                         }
                                     }
                                 }
@@ -439,6 +447,8 @@ public class Macgyver extends JFrame{
             Vertex u = vqueue.poll();
             for (Edge e : u.adjacencies){
                 Vertex v = e.target;
+                if (v.tags != null){
+                    if (!v.tags.containsValue("cycleway") || !v.tags.containsValue("footway")){
                 double weight = e.weight;
                 double distanceThroughU = u.minDistance + weight;
                 if (distanceThroughU < v.minDistance){
@@ -446,6 +456,8 @@ public class Macgyver extends JFrame{
                     v.minDistance = distanceThroughU;
                     v.previous = u;
                     vqueue.add(v);
+                }
+                }
                 }
             }
         }

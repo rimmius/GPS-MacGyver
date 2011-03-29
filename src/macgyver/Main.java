@@ -40,6 +40,7 @@ public class Main implements Runnable{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        JMapViewer.mapMarkerList.remove(0);
         run();
     }
     void connect ( String portName ) throws Exception
