@@ -43,6 +43,7 @@ public class OfflineMap extends JPanel implements MouseListener{
     JMenuItem fromCurrentJM = new JMenuItem("From My Current Position");
     JMenuItem delPoint = new JMenuItem("Delete this point");
     JMenuItem item = new JMenuItem("Set Destination");
+    Image build = new ImageIcon("s.gif").getImage();
     public OfflineMap(Image map) throws SAXException, IOException{
         Thread thread1 = new Thread(new OsmParser("gbglast.osm"));
         thread1.run();
@@ -134,8 +135,6 @@ public class OfflineMap extends JPanel implements MouseListener{
          * Author: Fredrik Gustafsson
          * Shows the shortest path to selected mapdot
          */
-        
-        
         fromCurrentJM.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 targetNr = recentNr;
@@ -219,20 +218,10 @@ public class OfflineMap extends JPanel implements MouseListener{
             
         double lat2 = mapMarkerList.get(targetNr).getLat();
         double lon2 = mapMarkerList.get(targetNr).getLon();
-        System.out.println(lat1 + ", " + lon1);
         int nearest = nearestVertex(lon1, lat1);
         int nearest2 = nearestVertex(lon2, lat2); 
         System.out.println(OsmParser.vertices.get(nearest2).name);
         Macgyver.computePaths(OsmParser.vertices.get(nearest));
-//        Vertex source = OsmParser.vertices.get(nearest);
-//        Vertex target = OsmParser.vertices.get(nearest2);
-//        OsmParser.vertices.remove(nearest);
-//        OsmParser.vertices.remove(nearest2);
-//        OsmParser.vertices.set(0, source);
-//        OsmParser.vertices.add(target);
-//        computePaths(OsmParser.vertices.get(0));
-//        
-//        path = getShortPathTo(OsmParser.vertices.get(OsmParser.vertices.size()-1));
         path = getShortPathTo(OsmParser.vertices.get(nearest2));
         shortestPath = new ArrayList<Vertex>();
         double shortDist = 0;
@@ -244,6 +233,13 @@ public class OfflineMap extends JPanel implements MouseListener{
 //        distlabel.setText("distance to destination: " + distInt + " meters");
 //        distlabel.setVisible(true);
 //        panel.validate();
+        System.out.println(path.size());
+        Vertex myPos = new Vertex("1", mapMarkerList.get(sourceNr).getLat(), mapMarkerList.get(sourceNr).getLon());
+        path.add(0, myPos);
+        System.out.println(path.size());
+        Vertex lastPos = new Vertex("2", mapMarkerList.get(targetNr).getLat(), mapMarkerList.get(targetNr).getLon());
+        path.add(lastPos);
+        System.out.println(path.size());
         shortestPath = path;
         this.validate();
     }
@@ -265,7 +261,6 @@ public class OfflineMap extends JPanel implements MouseListener{
     public int nearestVertex(double lon1, double lat1){
         double minDistance = 1000;
         int nearest = -1;
-        System.out.println("something");
         for (int i = 0; i < OsmParser.vertices.size(); i++) {
             //double checkThisValue = Math.sqrt(((lon1-OsmParser.vertices.get(i).lon) * (lon1-OsmParser.vertices.get(i).lon)) + ((lat1 - OsmParser.vertices.get(i).lat) * (lat1 - OsmParser.vertices.get(i).lat)));
             double checkThisValue = getDistance(lon1, lat1, OsmParser.vertices.get(i).lon, OsmParser.vertices.get(i).lat);
@@ -317,8 +312,6 @@ public class OfflineMap extends JPanel implements MouseListener{
     }
     public void paint(Graphics g){
         super.paint(g);
-//        g.drawOval(10, 10, 100, 100);
-//        g.drawImage(map, 0, 0, null);
         for (int i = 0; i < OsmParser.vertices.size(); i++){
             int x1 = LonToX(OsmParser.vertices.get(i).lon);
             int y1 = LatToY(OsmParser.vertices.get(i).lat);
@@ -331,7 +324,8 @@ public class OfflineMap extends JPanel implements MouseListener{
                 
                 int x2 = LonToX(OsmParser.vertices.get(i).adjacencies.get(j).target.lon);
                 int y2 = LatToY(OsmParser.vertices.get(i).adjacencies.get(j).target.lat);
-                    g.drawLine(x1, y1, x2, y2);
+                g.setColor(Color.BLACK);
+                g.drawLine(x1, y1, x2, y2);
             }
         }
         for (int i = 0; i < mapMarkerList.size(); i++) {
@@ -347,7 +341,7 @@ public class OfflineMap extends JPanel implements MouseListener{
             
             if (shortestPath != null){
                 Graphics2D g2d = (Graphics2D)g;
-                int width = 2;
+                int width = 4;
                 g2d.setStroke(new BasicStroke(width));
                 g2d.setColor(Color.BLUE);
                 for (int i = 1; i < shortestPath.size(); i++){
@@ -360,12 +354,7 @@ public class OfflineMap extends JPanel implements MouseListener{
             }
         }
     }
-    public void paintMarker(Graphics g, MapMarker marker){
-        
-           
-    }
     public static void main(String[] args) throws SAXException, IOException{
-        System.out.println("haj");
         Image img = new ImageIcon("offlinemap.png").getImage();
         mapp = new OfflineMap(img);
     }
@@ -399,7 +388,6 @@ public class OfflineMap extends JPanel implements MouseListener{
         double procent = x / length;
         double lonLength = MAX_LON - MIN_LON;
         procent = lonLength * procent;
-        System.out.println(procent);
         procent = MIN_LON + procent;
         return procent;
     }

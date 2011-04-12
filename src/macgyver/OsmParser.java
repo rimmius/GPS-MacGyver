@@ -67,20 +67,6 @@ public class OsmParser implements Runnable{
         
 	}
 	
-	public static void main(String[] args) throws SAXException, IOException
-	
-	{
-//	    File f;
-//	    JFileChooser jfc = new JFileChooser();
-//        jfc.showOpenDialog(null);
-//        f = new File(jfc.getSelectedFile().getPath());
-//        
-//		filename = f.toString();
-//		System.out.println(filename);
-//		InputSource inputSource = new InputSource(new FileReader(filename));
-//		OsmParser osmParser = new OsmParser();
-//		osmParser.parse(inputSource);
-	}
 	public String getPath(){
 	    return filename;
 	}
@@ -133,7 +119,7 @@ public class OsmParser implements Runnable{
 	            break;
 //    	    Vertex number1 = bSearch(nodeIdList.get(j), 0, vertices.size()-1);
 //    	    Vertex number2 = bSearch(nodeIdList.get(j+1), 0, vertices.size()-1);
-//	        if (tags.containsKey("highway")){
+	        if (tags.containsKey("highway") || tags.containsValue("coastline")){
 	        int number1Int = hashMap.get(Long.parseLong(nodeIdList.get(j)));
 	        Vertex number1 = vertices.get(number1Int);
 	        int number2Int = hashMap.get(Long.parseLong(nodeIdList.get(j+1)));
@@ -144,7 +130,7 @@ public class OsmParser implements Runnable{
             number1.adjacencies.add(temp);
     	    if (!temp.tags.containsValue("oneway"))
     	        number2.adjacencies.add(new Edge(number1, distance, tags));
-//	        }
+	        }
 	    }
 	    
 	}
