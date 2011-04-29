@@ -87,9 +87,8 @@ public class Macgyver extends JFrame{
     public static Thread thread1;
     static int latestSource;
     static int latestTarget;
-    JPanel panel = new JPanel();
+    GridBagConstraints c = new GridBagConstraints();
     JLabel distlabel = new JLabel();
-
     public Macgyver() throws InterruptedException, SAXException, IOException {
         super("GPS MacGyver");
         setSize(400, 400);
@@ -97,17 +96,15 @@ public class Macgyver extends JFrame{
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
-        add(panel, BorderLayout.NORTH);
         add(map, BorderLayout.CENTER);
         add(locPanel, BorderLayout.EAST);
+        c.fill = GridBagConstraints.HORIZONTAL;
         /**
          * Author: Fredrik Gustafsson
          * 
          * Sets destination with blue mapdot on map
          */
         final JMenuItem item = new JMenuItem("Set Destination");
-        
         item.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 MapMarkerDot temp = new MapMarkerDot(Color.BLUE, map.getPosition(mouseX, mouseY).getLat(), map.getPosition(mouseX, mouseY).getLon());
@@ -220,12 +217,16 @@ public class Macgyver extends JFrame{
          * Fredrik Gustafsson
          */
         JButton current = new JButton("Show current location");
-        panel.add(current);
+        c.gridx = 0;
+        c.gridy = 0;
+        locPanel.add(current, c);
         /**
          * Author: Fredrik Gustafsson
          */
         JButton readLocFile = new JButton("Read loc-file");
-        panel.add(readLocFile);
+        c.gridx = 0;
+        c.gridy = 1;
+        locPanel.add(readLocFile, c);
         readLocFile.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 readLocFile();
@@ -238,8 +239,8 @@ public class Macgyver extends JFrame{
          */
         current.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                Main main = new Main();
-                Main.main(null);
+                Receiver main = new Receiver();
+                Receiver.main(null);
                 
                 try {
                     Thread.sleep(2000);
@@ -247,7 +248,7 @@ public class Macgyver extends JFrame{
                     // TODO Auto-generated catch block
                     es.printStackTrace();
                 }
-                Thread threaden = new Thread(new Main(map));
+                Thread threaden = new Thread(new Receiver(map));
                 threaden.start();
                 map.setDisplayPositionByLatLon(main.getLatitude(), main.getLongitude(), 13);
             }
@@ -280,7 +281,9 @@ public class Macgyver extends JFrame{
                 OsmParser.vertices.remove(i);
             }
         }
-        panel.add(distlabel);
+        c.gridx = 0;
+        c.gridy = 2;
+        locPanel.add(distlabel, c);
     }
     /**
      * removePoint
@@ -293,7 +296,7 @@ public class Macgyver extends JFrame{
             if (shortestPath != null){
                 shortestPath = null;
                 distlabel.setText("");
-                panel.validate();
+                locPanel.validate();
             }
         }
         map.repaint();
@@ -308,7 +311,7 @@ public class Macgyver extends JFrame{
         JFileChooser jfc = new JFileChooser();
         jfc.showOpenDialog(null);
         f = new File(jfc.getSelectedFile().getPath());
-        GridBagConstraints c = new GridBagConstraints();
+        
         String locfilename = f.toString();
         LOCParser locp = new LOCParser();
         final ArrayList<Geocache> geocaches = locp.getGeoInfo(locfilename);
@@ -318,12 +321,12 @@ public class Macgyver extends JFrame{
         }
         for (int i = 0; i < checkbox.size(); i++){
             c.gridx = 0;
-            c.gridy = i;
+            c.gridy = i+4;
             locPanel.add(checkbox.get(i), c);
         }
         JButton chooseGeo = new JButton("Choose this Geocache");
         c.gridx = 0;
-        c.gridy = checkbox.size();
+        c.gridy = checkbox.size()+4;
         chooseGeo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 for (int i = 0; i < checkbox.size(); i++){
@@ -374,7 +377,7 @@ public class Macgyver extends JFrame{
         int distInt = (int)shortDist;
         distlabel.setText("distance to destination: " + distInt + " meters");
         distlabel.setVisible(true);
-        panel.validate();
+        locPanel.validate();
         shortestPath = path;
         map.validate();
     }
@@ -449,15 +452,15 @@ public class Macgyver extends JFrame{
                 Vertex v = e.target;
                 if (v.tags != null){
                     if (!v.tags.containsValue("cycleway") || !v.tags.containsValue("footway")){
-                double weight = e.weight;
-                double distanceThroughU = u.minDistance + weight;
-                if (distanceThroughU < v.minDistance){
-                    vqueue.remove(v);
-                    v.minDistance = distanceThroughU;
-                    v.previous = u;
-                    vqueue.add(v);
-                }
-                }
+                        double weight = e.weight;
+                        double distanceThroughU = u.minDistance + weight;
+                        if (distanceThroughU < v.minDistance){
+                            vqueue.remove(v);
+                            v.minDistance = distanceThroughU;
+                            v.previous = u;
+                            vqueue.add(v);
+                        }
+                    }
                 }
             }
         }
